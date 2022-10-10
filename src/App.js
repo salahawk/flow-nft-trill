@@ -3,10 +3,23 @@ import React, { useState, useEffect } from "react";
 import './App.css';
 import twitterLogo from "./assets/twitter-logo.svg";
 
-const TWITTER_HANDLE = "_buildspace";
+import * as fcl from "@onflow/fcl";
+import * as types from "@onflow/types";
+
+fcl.config({
+  "flow.network": "testnet",
+  "accessNode.api": "https://rest-testnet.onflow.org",
+  "app.detail.title": "TrillNode",
+  "app.detail.icon": "",
+  "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn",
+});
+
+const TWITTER_HANDLE = "salahawk";
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 function App() {
+
+  const [user, setUser] = useState();
 
   return (
     <div className="App">
