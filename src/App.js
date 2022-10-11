@@ -6,6 +6,8 @@ import twitterLogo from "./assets/twitter-logo.svg";
 import * as fcl from "@onflow/fcl";
 import * as types from "@onflow/types";
 
+import { getTotalSupply } from "./cadence/scripts/getTotalSupply_script";
+
 fcl.config({
   "flow.network": "testnet",
   "accessNode.api": "https://rest-testnet.onflow.org",
@@ -29,6 +31,19 @@ function App() {
     fcl.unauthenticate();
   }
 
+  const totalSupply = async () => {
+    let _totalSupply;
+
+    try {
+      _totalSupply = await fcl.query({
+        cadence: getTotalSupply
+      })
+      console.log(_totalSupply);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     // This listens to changes in the user objects
     // and updates the connected user
@@ -41,6 +56,8 @@ function App() {
         setNetwork(d.data.network);
       }
     })
+
+    totalSupply();
   }, []);
   
   const RenderLogin = () => (
