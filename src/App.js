@@ -7,6 +7,7 @@ import * as fcl from "@onflow/fcl";
 import * as types from "@onflow/types";
 
 import { getTotalSupply } from "./cadence/scripts/getTotalSupply_script";
+import { mintNFT } from "./cadence/transactions/mintNFT_tx";
 
 fcl.config({
   "flow.network": "testnet",
@@ -31,14 +32,39 @@ function App() {
     fcl.unauthenticate();
   }
 
-  const totalSupply = async () => {
+  const mint = async () => {
     let _totalSupply;
-
+    
     try {
       _totalSupply = await fcl.query({
         cadence: getTotalSupply
-      })
-      console.log(_totalSupply);
+      });
+      console.log(`Current total supply : ${_totalSupply}`);
+    } catch (error) {
+      console.log(error);
+    }
+
+    // const _id = _totalSupply + 1;
+    // console.log(`Next NFT ID: ${_id}`);
+
+    try {
+      const txnId = await fcl.mutate({
+        cadence: mintNFT,
+        args: (arg, t) => [
+          arg(user.addr, types.Address),  // address to which the NFT should be minted
+          arg("TrillNode"/* + _id.toString()*/, types.String),  // name
+          arg("Super rare Epic node on Flow", types.String),  // description
+          arg("https://gateway.pinata.cloud/ipfs/QmVcJcMEndDFmD3dJASFgS1Mqd8LkBY4cbFrHuVgoD55VF/Large.mp4", types.String), // thumbnail
+        ],
+        proposer: fcl.currentUser,
+        payer: fcl.currentUser,
+        limit: 99
+      });
+      console.log(`Minting NFT now with transaction ID`, txnId);
+      const txn = await fcl.tx(txnId).onceSealed();
+      console.log(`Testnet explorer link: https://testnet.flowscan.org/transaction/${txnId}`);
+      console.log(txn);
+      alert("NFT minted successfully!");
     } catch (error) {
       console.log(error);
     }
@@ -56,8 +82,6 @@ function App() {
         setNetwork(d.data.network);
       }
     })
-
-    totalSupply();
   }, []);
   
   const RenderLogin = () => (
@@ -75,6 +99,13 @@ function App() {
       </div>
     )
   )
+  const RenderMintButton = () => (
+    <div>
+      <button className="cta-button button-glow" onClick={() => mint()}>
+        Mint
+      </button>
+    </div>
+  )
   
   return (
     <div className="App">
@@ -89,7 +120,7 @@ function App() {
           <p className="sub-text">The easiest NFT mint experience ever!</p>
         </div>
 
-        {(user && user.addr) ? "Wallet connected!" : <RenderLogin />}
+        {(user && user.addr) ? <RenderMintButton /> : <RenderLogin />}
 
         <div className="footer-container">
             <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
