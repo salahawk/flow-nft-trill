@@ -10,5 +10,8 @@ To get started with this course, clone this repo and follow these commands:
 ### View collection on blockchain
 https://flow-view-source.com/testnet/account/0x1a60d5649eeb9d82/contract/TrillNode
 
+### App running on GitHub
+https://salahawk.trillnode.github.io
+
 ### **Questions?**
 Feel free to contact at `live:.cid.7117ab74680529ef`
