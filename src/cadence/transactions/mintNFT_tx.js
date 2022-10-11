@@ -1,7 +1,8 @@
 export const mintNFT = 
 `
-import TrillNode from 0x1a60d5649eeb9d82 
+import SmolRunners from 0x1a60d5649eeb9d82 
 import NonFungibleToken from 0x631e88ae7f1d7c20
+import MetadataViews from 0x631e88ae7f1d7c20
 
 transaction(
   recipient: Address,
@@ -10,20 +11,20 @@ transaction(
   thumbnail: String,
 ) {
   prepare(signer: AuthAccount) {
-    if signer.borrow<&TrillNode.Collection>(from: TrillNode.CollectionStoragePath) != nil {
+    if signer.borrow<&SmolRunners.Collection>(from: SmolRunners.CollectionStoragePath) != nil {
       return
     }
 
     // Create a new empty collection
-    let collection <- TrillNode.createEmptyCollection()
+    let collection <- SmolRunners.createEmptyCollection()
 
     // save it to the account
-    signer.save(<-collection, to: TrillNode.CollectionStoragePath)
+    signer.save(<-collection, to: SmolRunners.CollectionStoragePath)
 
     // create a public capability for the collection
     signer.link<&{NonFungibleToken.CollectionPublic}>(
-      TrillNode.CollectionPublicPath,
-      target: TrillNode.CollectionStoragePath
+      SmolRunners.CollectionPublicPath,
+      target: SmolRunners.CollectionStoragePath
     )
   }
 
@@ -31,12 +32,12 @@ transaction(
   execute {
     // Borrow the recipient's public NFT collection reference
     let receiver = getAccount(recipient)
-      .getCapability(TrillNode.CollectionPublicPath)
+      .getCapability(SmolRunners.CollectionPublicPath)
       .borrow<&{NonFungibleToken.CollectionPublic}>()
       ?? panic("Could not get receiver reference to the NFT Collection")
 
     // Mint the NFT and deposit it to the recipient's collection
-    TrillNode.mint(
+    SmolRunners.mint(
       recipient: receiver,
       name: name,
       description: description,

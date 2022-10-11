@@ -6,13 +6,15 @@ import * as fcl from "@onflow/fcl";
 import * as types from "@onflow/types";
 
 import { getTotalSupply } from "./cadence/scripts/getTotalSupply_script";
+import { getIDs } from "./cadence/scripts/getID_script";
+import { getMetadata } from "./cadence/scripts/getMetadata_script";
 import { mintNFT } from "./cadence/transactions/mintNFT_tx";
 
 fcl.config({
   "flow.network": "testnet",
   "accessNode.api": "https://rest-testnet.onflow.org",
-  "app.detail.title": "TrillNode",
-  "app.detail.icon": "https://cdn.shopify.com/s/files/1/0500/2936/3362/files/TRILLESTLOGO1_3_d05e1621-75cf-4f93-9dd1-1f1019a42b77_180x.png",
+  "app.detail.title": "SmolRunners",
+  "app.detail.icon": "https://pbs.twimg.com/profile_images/1483011452676067331/xJ92Ela6_400x400.jpg",
   "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn",
 });
 
@@ -21,6 +23,7 @@ function App() {
   const [user, setUser] = useState();
   const [network, setNetwork] = useState("");
   const [mintEnabled, setMintEnabled] = useState(false);
+  const [images, setImages] = useState([]);
 
   const logIn = () => {
     fcl.authenticate();
@@ -36,22 +39,26 @@ function App() {
       _totalSupply = await fcl.query({
         cadence: getTotalSupply
       });
+      if (_totalSupply > 5) {
+        alert("Already sold out!!!")  ;
+        return;
+      }
       console.log(`Current total supply : ${_totalSupply}`);
     } catch (error) {
       console.log(error);
     }
 
-    // const _id = _totalSupply + 1;
-    // console.log(`Next NFT ID: ${_id}`);
+    const _id = Number(_totalSupply) + 1;
+    console.log(`Next NFT ID: ${_id}`);
 
     try {
       const txnId = await fcl.mutate({
         cadence: mintNFT,
         args: (arg, t) => [
           arg(user.addr, types.Address),  // address to which the NFT should be minted
-          arg("TrillNode"/* + _id.toString()*/, types.String),  // name
-          arg("Super rare Epic node on Flow", types.String),  // description
-          arg("https://gateway.pinata.cloud/ipfs/QmVcJcMEndDFmD3dJASFgS1Mqd8LkBY4cbFrHuVgoD55VF/Large.mp4", types.String), // thumbnail
+          arg("SmolRunners #" + _id.toString(), types.String),  // name
+          arg("SmolRunners NFT collection on Flow", types.String),  // description
+          arg("https://ipfs.io/ipfs/QmbDPWN3bMEBNwJ4g1bpi9dtuMSZFjLdtcRFNL78Wfth2R/" + _id.toString() + ".avif", types.String), // thumbnail
         ],
         proposer: fcl.currentUser,
         payer: fcl.currentUser,
@@ -67,7 +74,30 @@ function App() {
     }
   }
 
+  const fetchNFTs = async () => {
+    // Empty the images array
+    setImages([]);
+    let IDs = [];
+
+    // Fetch the IDs with our script (no fees or signers necessary)
+    try {
+      IDs = await fcl.query({
+        cadence: getIDs,
+        args: (arg, t) => [
+          arg(user.addr, types.Address),
+        ],
+      });
+      console.log(IDs);
+    } catch (error) {
+      console.log("No NFTs Owned");
+    }
+  }
+
   useEffect(() => {
+    if (user && user.addr) {
+      fetchNFTs();
+    }
+
     // This listens to changes in the user objects
     // and updates the connected user
     fcl.currentUser().subscribe(setUser);
@@ -119,7 +149,7 @@ function App() {
         <div className="header-container">
           <div className="logo-container">
             <img src="./logo.png" className="flow-logo" alt="flow logo"/>
-            <p className="header">Trillest NFTs on Flow ✨</p>
+            <p className="header">SmolRunners NFTs on Flow ✨</p>
           </div>
 
           <p className="sub-text">The easiest NFT mint experience ever!</p>

@@ -1,4 +1,4 @@
-# Trillest NFT Collection on Flow
+# NFT Collection on Flow
 
 ### **Welcome 👋**
 To get started with this course, clone this repo and follow these commands:
@@ -9,9 +9,10 @@ To get started with this course, clone this repo and follow these commands:
 
 ### View collection on blockchain
 https://flow-view-source.com/testnet/account/0x1a60d5649eeb9d82/contract/TrillNode
+https://flow-view-source.com/testnet/account/0x1a60d5649eeb9d82/contract/SmolRunners
 
 ### App running on Netlify
-https://flow-nft-trill.netlify.app/
+https://flow-nft.netlify.app/
 
 ### **Questions?**
 Feel free to contact at `live:.cid.7117ab74680529ef`
