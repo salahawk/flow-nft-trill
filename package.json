@@ -2,7 +2,7 @@
   "name": "flow-nft-starter",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://salahawk.trillnode.github.io",
+  "homepage": "https://salahawk.github.io/flow-nft-trill/",
   "dependencies": {
     "@onflow/fcl": "^1.0.2",
     "@onflow/types": "^1.0.1",
