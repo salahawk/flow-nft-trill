@@ -17,9 +17,6 @@ fcl.config({
   "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn",
 });
 
-const TWITTER_HANDLE = "salahawk";
-const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-
 function App() {
 
   const [user, setUser] = useState();
@@ -131,10 +128,11 @@ function App() {
 
         {(user && user.addr) ? <RenderMintButton /> : <RenderLogin />}
 
-        <div className="footer-container">
-            <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
-            <a className="footer-text" href={TWITTER_LINK} target="_blank" rel="noreferrer">{`built on @${TWITTER_HANDLE}`}</a>
-        </div>
+        {/* <div className="footer-container">
+          <div className="footer-text">
+            &copy;
+          </div>
+        </div> */}
       </div>
     </div>
   );
