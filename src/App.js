@@ -24,6 +24,7 @@ function App() {
 
   const [user, setUser] = useState();
   const [network, setNetwork] = useState("");
+  const [mintEnabled, setMintEnabled] = useState(false);
 
   const logIn = () => {
     fcl.authenticate();
@@ -83,6 +84,14 @@ function App() {
       }
     })
   }, []);
+  useEffect(() => {
+    if (network !== 'testnet') {
+      alert("This app works on testnet - please switch network to testnet!!!");
+      setMintEnabled(false);
+    } else {
+      setMintEnabled(true);
+    }
+  }, [network]);
   
   const RenderLogin = () => (
     <div>
@@ -101,7 +110,7 @@ function App() {
   )
   const RenderMintButton = () => (
     <div>
-      <button className="cta-button button-glow" onClick={() => mint()}>
+      <button className="cta-button button-glow" onClick={() => mint()} disabled={!mintEnabled}>
         Mint
       </button>
     </div>
