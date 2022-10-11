@@ -1,7 +1,6 @@
 //importing required libraries
 import React, { useState, useEffect } from "react";
 import './App.css';
-import twitterLogo from "./assets/twitter-logo.svg";
 
 import * as fcl from "@onflow/fcl";
 import * as types from "@onflow/types";
