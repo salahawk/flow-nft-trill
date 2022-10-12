@@ -11,6 +11,9 @@ To get started with this course, clone this repo and follow these commands:
 https://flow-view-source.com/testnet/account/0x1a60d5649eeb9d82/contract/TrillNode
 https://flow-view-source.com/testnet/account/0x1a60d5649eeb9d82/contract/SmolRunners
 
+### Collection on IPFS
+https://ipfs.io/ipfs/QmbDPWN3bMEBNwJ4g1bpi9dtuMSZFjLdtcRFNL78Wfth2R
+
 ### App running on Netlify
 https://flow-nft.netlify.app/
 

@@ -29,12 +29,15 @@ function App() {
     fcl.authenticate();
   }
   const logOut = () => {
+    setImages([]);
     fcl.unauthenticate();
   }
 
   const mint = async () => {
     let _totalSupply;
     
+    setMintEnabled(false);
+
     try {
       _totalSupply = await fcl.query({
         cadence: getTotalSupply
@@ -72,6 +75,8 @@ function App() {
     } catch (error) {
       console.log(error);
     }
+
+    setMintEnabled(true);
   }
 
   const fetchNFTs = async () => {
@@ -91,13 +96,38 @@ function App() {
     } catch (error) {
       console.log("No NFTs Owned");
     }
+
+    let _imageSrc = [];
+    try {
+      for (let i = 0; i < IDs.length; i++) {
+        const _id = IDs[i];
+        const result = await fcl.query({
+          cadence: getMetadata,
+          args: (arg, t) => [
+            arg(user.addr, types.Address),
+            arg(_id.toString(), types.UInt256),
+          ],
+        });
+
+        _imageSrc.push(result["thumbnail"]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    if (images.length < _imageSrc.length) {
+      setImages((Array.from({length: _imageSrc.length}, (_, i) => i).map((number, index) => (
+        <img
+          style={{margin: "10px", height: "150px"}}
+          src={_imageSrc[index]}
+          key={index}
+          alt={"NFT #" + number}
+        />
+      ))))
+    }
   }
 
   useEffect(() => {
-    if (user && user.addr) {
-      fetchNFTs();
-    }
-
     // This listens to changes in the user objects
     // and updates the connected user
     fcl.currentUser().subscribe(setUser);
@@ -110,6 +140,13 @@ function App() {
       }
     })
   }, []);
+
+  useEffect(() => {
+    if (user && user.addr) {
+      fetchNFTs();
+    }
+  }, [user, mintEnabled]);
+
   useEffect(() => {
     if (network !== 'testnet') {
       alert("This app works on testnet - please switch network to testnet!!!");
@@ -118,10 +155,19 @@ function App() {
       setMintEnabled(true);
     }
   }, [network]);
+
+  const RenderGif = () => {
+    const gifUrl = user?.addr
+        ? "https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy-downsized.gif"
+        : "https://i.giphy.com/media/Y2ZUWLrTy63j9T6qrK/giphy.webp";
+    return <img className="gif-image" src={gifUrl} height="300px" alt="Funny gif"/>;
+  };
   
   const RenderLogin = () => (
     <div>
-      <button className="cta-button button-glow" onClick={() => logIn()}>Log In</button>
+      <button className="cta-button button-glow" onClick={() => logIn()}>
+        Log In
+      </button>
     </div>
   )
   const RenderLogout = () => (
@@ -134,11 +180,22 @@ function App() {
       </div>
     )
   )
-  const RenderMintButton = () => (
+  const RenderMint = () => (
     <div>
-      <button className="cta-button button-glow" onClick={() => mint()} disabled={!mintEnabled}>
-        Mint
-      </button>
+      <div className="button-container">
+        <button className="cta-button button-glow" onClick={() => mint()} disabled={!mintEnabled}>
+          Mint
+        </button>
+      </div>
+      {images.length > 0 
+      ? <>
+          <h2>Your NFTs</h2>
+          <div className="image-container">
+            {images}
+          </div>
+        </>
+      : ""
+      }
     </div>
   )
   
@@ -151,11 +208,11 @@ function App() {
             <img src="./logo.png" className="flow-logo" alt="flow logo"/>
             <p className="header">SmolRunners NFTs on Flow ✨</p>
           </div>
-
+          <RenderGif />
           <p className="sub-text">The easiest NFT mint experience ever!</p>
         </div>
 
-        {(user && user.addr) ? <RenderMintButton /> : <RenderLogin />}
+        {(user && user.addr) ? <RenderMint /> : <RenderLogin />}
 
         {/* <div className="footer-container">
           <div className="footer-text">

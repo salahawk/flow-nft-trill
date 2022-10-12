@@ -22,7 +22,7 @@ transaction(
     signer.save(<-collection, to: SmolRunners.CollectionStoragePath)
 
     // create a public capability for the collection
-    signer.link<&{NonFungibleToken.CollectionPublic}>(
+    signer.link<&{NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(
       SmolRunners.CollectionPublicPath,
       target: SmolRunners.CollectionStoragePath
     )
